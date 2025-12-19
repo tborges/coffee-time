@@ -5,7 +5,7 @@ const { spawn } = require('child_process');
 const USAGE_ERROR = 2;
 
 function printUsage() {
-  console.error('Usage: coffee-break start --interval <minutes>');
+  console.error('Usage: coffee-time start --interval <minutes>');
 }
 
 function parseArgs(argv) {
@@ -57,12 +57,12 @@ function sendDesktopNotification(message) {
   if (platform === 'darwin') {
     return attemptNotification('osascript', [
       '-e',
-      `display notification "${message}" with title "coffee-break"`,
+      `display notification "${message}" with title "coffee-time"`,
     ]);
   }
 
   if (platform === 'linux') {
-    return attemptNotification('notify-send', ['coffee-break', message]);
+    return attemptNotification('notify-send', ['coffee-time', message]);
   }
 
   if (platform === 'win32') {
@@ -70,7 +70,7 @@ function sendDesktopNotification(message) {
       `$notify = New-Object System.Windows.Forms.NotifyIcon;` +
       `$notify.Icon = [System.Drawing.SystemIcons]::Information;` +
       `$notify.Visible = $true;` +
-      `$notify.ShowBalloonTip(10000, 'coffee-break', '${message}', [System.Windows.Forms.ToolTipIcon]::Info);`;
+      `$notify.ShowBalloonTip(10000, 'coffee-time', '${message}', [System.Windows.Forms.ToolTipIcon]::Info);`;
     return attemptNotification('powershell.exe', ['-NoProfile', '-Command', script]);
   }
 

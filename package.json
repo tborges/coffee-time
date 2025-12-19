@@ -1,16 +1,16 @@
 {
-  "name": "coffee-break",
+  "name": "coffee-time",
   "publishConfig": {
     "access": "public"
   },
   "version": "1.0.0",
   "description": "Lightweight CLI to schedule coffee breaks at a fixed interval.",
   "bin": {
-    "coffee-break": "./bin/coffee-break.js"
+    "coffee-time": "./bin/coffee-time.js"
   },
   "license": "MIT",
   "type": "commonjs",
   "scripts": {
-    "start": "node ./bin/coffee-break.js"
+    "start": "node ./bin/coffee-time.js"
   }
 }

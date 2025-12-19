@@ -1,9 +1,9 @@
-# coffee-break
+# coffee-time
 
 A lightweight CLI that schedules recurring coffee breaks while you code.
 
 ## Why
-Long uninterrupted work sessions hurt focus. `coffee-break` keeps a reliable, low-noise loop that nudges you to step away at predictable intervals.
+Long uninterrupted work sessions hurt focus. `coffee-time` keeps a reliable, low-noise loop that nudges you to step away at predictable intervals.
 
 ## Install
 ```
@@ -13,7 +13,7 @@ npm install -g .
 ## Usage
 Start a continuous break loop with a required interval (minutes):
 ```
-coffee-break start --interval 45
+coffee-time start --interval 45
 ```
 
 ### What happens
