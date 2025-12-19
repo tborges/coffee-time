@@ -1,5 +1,8 @@
 {
-  "name": "@tborges/coffee-break",
+  "name": "coffee-break",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "1.0.0",
   "description": "Lightweight CLI to schedule coffee breaks at a fixed interval.",
   "bin": {
