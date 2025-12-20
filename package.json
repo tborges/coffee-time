@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.0.0",
+  "version": "1.1.1",
   "description": "Lightweight CLI to schedule coffee breaks at a fixed interval.",
   "bin": {
     "coffee-time": "./bin/coffee-time.js"
@@ -12,5 +12,19 @@
   "type": "commonjs",
   "scripts": {
     "start": "node ./bin/coffee-time.js"
-  }
+  },
+   "keywords": [
+    "Coffee Time",
+    "Coffee-time",
+    "coffee-break",
+    "coffee break",
+    "Template",
+    "coffee",
+    "break",
+    "productivity",
+    "cli",
+    "developer",
+    "timer",
+    "reminder"
+  ]
 }
