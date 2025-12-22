@@ -34,13 +34,22 @@ Start a continuous break loop with a required interval (minutes):
 coffee-time start --interval 45
 ```
 
+Add a lightweight countdown ping every minute:
+
+```bash
+coffee-time start --interval 45 --status
+```
+
 ---
 
 ## What happens
 
 * Prints a single startup line:
   `Coffee breaks scheduled every 45 minutes. Press Ctrl+C to stop.`
+* Optional status flag (`--status`) prints a countdown update every minute:
+  `⏳ Next break in 44:00`
 * Waits 45 minutes, then triggers a break notification.
+* After each break, countdown updates continue when `--status` is enabled.
 * Immediately schedules the next interval and repeats until you stop it (`Ctrl+C`).
 
 ---

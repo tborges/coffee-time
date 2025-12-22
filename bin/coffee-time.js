@@ -24,11 +24,14 @@ function parseArgs(argv) {
   }
 
   let intervalMinutes;
+  let showStatus = false;
   for (let i = 0; i < rest.length; i += 1) {
     const token = rest[i];
     if (token === '--interval') {
       intervalMinutes = rest[i + 1];
       i += 1;
+    } else if (token === '--status') {
+      showStatus = true;
     } else {
       console.error(`Unknown option: ${token}`);
       printUsage();
@@ -48,7 +51,7 @@ function parseArgs(argv) {
     process.exit(USAGE_ERROR);
   }
 
-  return parsedInterval;
+  return { intervalMinutes: parsedInterval, showStatus };
 }
 
 function sendDesktopNotification(message) {
@@ -92,27 +95,62 @@ function notify(intervalMinutes) {
   sendDesktopNotification(message).catch(() => {});
 }
 
-function startLoop(intervalMinutes) {
+function formatRemaining(remainingMs) {
+  const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+}
+
+function startLoop(intervalMinutes, options = {}) {
+  const { showStatus = false } = options;
   console.log(`Coffee breaks scheduled every ${intervalMinutes} minutes. Press Ctrl+C to stop.`);
 
+  const startedAt = Date.now();
   const intervalMs = intervalMinutes * 60 * 1000;
-  let nextTime = Date.now() + intervalMs;
+  let nextTime = startedAt + intervalMs;
   let timeoutId = null;
+  let statusIntervalId = null;
+  let statusTimeoutId = null;
+
+  const logStatus = () => {
+    const remaining = nextTime - Date.now();
+    console.log(`⏳ Next break in ${formatRemaining(remaining)}`);
+  };
 
   function scheduleNext() {
     const delay = Math.max(0, nextTime - Date.now());
     timeoutId = setTimeout(() => {
       notify(intervalMinutes);
       nextTime += intervalMs;
+      if (showStatus) {
+        logStatus();
+      }
       scheduleNext();
     }, delay);
   }
 
   scheduleNext();
 
+  if (showStatus) {
+    const elapsed = Date.now() - startedAt;
+    const firstDelay = Math.max(0, 60 * 1000 - (elapsed % (60 * 1000)));
+
+    statusTimeoutId = setTimeout(() => {
+      logStatus();
+      statusIntervalId = setInterval(logStatus, 60 * 1000);
+    }, firstDelay);
+  }
+
   const handleExit = () => {
     if (timeoutId) {
       clearTimeout(timeoutId);
+    }
+    if (statusTimeoutId) {
+      clearTimeout(statusTimeoutId);
+    }
+    if (statusIntervalId) {
+      clearInterval(statusIntervalId);
     }
     console.log('\nStopped. Stay fresh ☕');
     process.exit(0);
@@ -124,8 +162,8 @@ function startLoop(intervalMinutes) {
 
 function main() {
   try {
-    const intervalMinutes = parseArgs(process.argv);
-    startLoop(intervalMinutes);
+    const { intervalMinutes, showStatus } = parseArgs(process.argv);
+    startLoop(intervalMinutes, { showStatus });
   } catch (error) {
     console.error('Unexpected error:', error.message);
     process.exit(1);
