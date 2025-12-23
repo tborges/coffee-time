@@ -89,9 +89,9 @@ function attemptNotification(command, args) {
   });
 }
 
-function notify(intervalMinutes) {
+function notify(intervalMinutes, logLine = console.log) {
   const message = `Time for a coffee break! (${intervalMinutes} min interval)`;
-  console.log(`☕ ${message}`);
+  logLine(`☕ ${message}`);
   sendDesktopNotification(message).catch(() => {});
 }
 
@@ -116,6 +116,18 @@ function printCoffeeArt() {
 
 function startLoop(intervalMinutes, options = {}) {
   const { showStatus = false } = options;
+  let statusLength = 0;
+  let statusActive = false;
+
+  const logLine = (message) => {
+    if (statusActive) {
+      process.stdout.write('\n');
+      statusActive = false;
+      statusLength = 0;
+    }
+    console.log(message);
+  };
+
   console.log(`Coffee breaks scheduled every ${intervalMinutes} minutes. Press Ctrl+C to stop.`);
   printCoffeeArt();
 
@@ -128,13 +140,17 @@ function startLoop(intervalMinutes, options = {}) {
 
   const logStatus = () => {
     const remaining = nextTime - Date.now();
-    console.log(`⏳ Next break in ${formatRemaining(remaining)}`);
+    const message = `⏳ Next break in ${formatRemaining(remaining)}`;
+    const paddedMessage = message.padEnd(statusLength, ' ');
+    process.stdout.write(`\r${paddedMessage}`);
+    statusLength = message.length;
+    statusActive = true;
   };
 
   function scheduleNext() {
     const delay = Math.max(0, nextTime - Date.now());
     timeoutId = setTimeout(() => {
-      notify(intervalMinutes);
+      notify(intervalMinutes, logLine);
       nextTime += intervalMs;
       if (showStatus) {
         logStatus();
@@ -165,7 +181,7 @@ function startLoop(intervalMinutes, options = {}) {
     if (statusIntervalId) {
       clearInterval(statusIntervalId);
     }
-    console.log('\nStopped. Stay fresh ☕');
+    logLine('\nStopped. Stay fresh ☕');
     process.exit(0);
   };
 
