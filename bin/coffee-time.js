@@ -102,9 +102,22 @@ function formatRemaining(remainingMs) {
   return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
+function printCoffeeArt() {
+  const artLines = [
+    '   ( (',
+    '    ) )',
+    '  ........',
+    '  |      |]',
+    '  \\      /',
+    "   '----'",
+  ];
+  console.log(artLines.join('\n'));
+}
+
 function startLoop(intervalMinutes, options = {}) {
   const { showStatus = false } = options;
   console.log(`Coffee breaks scheduled every ${intervalMinutes} minutes. Press Ctrl+C to stop.`);
+  printCoffeeArt();
 
   const startedAt = Date.now();
   const intervalMs = intervalMinutes * 60 * 1000;
