@@ -97,9 +97,9 @@ function notify(intervalMinutes, logLine = console.log) {
 
 function formatRemaining(remainingMs) {
   const totalSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  const minutes = Math.max(0, Math.ceil(totalSeconds / 60));
+  const unit = minutes === 1 ? 'minute' : 'minutes';
+  return `${minutes} ${unit}`;
 }
 
 function printCoffeeArt() {
@@ -196,7 +196,7 @@ function startLoop(intervalMinutes, options = {}) {
 
   const logStatus = () => {
     const remaining = nextTime - Date.now();
-    const message = `⏰ Next break in ${formatRemaining(remaining)}`;
+    const message = `&#9200; Next break in ${formatRemaining(remaining)}`;
     const paddedMessage = message.padEnd(statusLength, ' ');
     process.stdout.write(`\r${paddedMessage}`);
     statusLength = message.length;
