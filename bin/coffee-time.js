@@ -103,11 +103,6 @@ function formatRemaining(remainingMs) {
   return `${minutes} ${unit}`;
 }
 
-function isWindowsLike() {
-  return process.platform === 'win32'
-    || /microsoft/i.test(os.release());
-}
-
 function supportsEmoji() {
   if (process.env.COFFEE_TIME_FORCE_ASCII === '1') {
     return false;
@@ -116,10 +111,12 @@ function supportsEmoji() {
     return true;
   }
 
+  const isWsl = /microsoft/i.test(os.release());
+
   return process.env.TERM_PROGRAM === 'Apple_Terminal'
-    || Boolean(process.env.WT_SESSION)
     || process.env.TERM_PROGRAM === 'vscode'
-    || isWindowsLike();
+    || Boolean(process.env.WT_SESSION)
+    || isWsl;
 }
 
 function printCoffeeArt() {
