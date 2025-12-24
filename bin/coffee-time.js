@@ -103,21 +103,77 @@ function formatRemaining(remainingMs) {
 }
 
 function printCoffeeArt() {
-  const artLines = [
-    '   ( (',
-    '    ) )',
-    '  ........',
-    '  |      |]',
-    '  \\      /',
-    "   '----'",
+  const frames = [
+    [
+      '   (  (   ',
+      '    )  )  ',
+      '   ((((   ',
+      '  ........',
+      '  |      |]',
+      '  \\      /',
+      "   '----'",
+    ],
+    [
+      '    (     ',
+      '   ( )    ',
+      '    ) ))  ',
+      '  ........',
+      '  |      |]',
+      '  \\      /',
+      "   '----'",
+    ],
+    [
+      '    )  )  ',
+      '   (  (   ',
+      '    ((    ',
+      '  ........',
+      '  |      |]',
+      '  \\      /',
+      "   '----'",
+    ],
+    [
+      '   (      ',
+      '    ) )   ',
+      '   )  )   ',
+      '  ........',
+      '  |      |]',
+      '  \\      /',
+      "   '----'",
+    ],
   ];
-  console.log(artLines.join('\n'));
+
+  const maxWidth = frames.reduce((width, frame) => (
+    Math.max(width, ...frame.map((line) => line.length))
+  ), 0);
+  const normalizedFrames = frames.map((frame) => frame.map((line) => line.padEnd(maxWidth, ' ')));
+  const artHeight = normalizedFrames[0].length;
+  let frameIndex = 0;
+
+  const renderFrame = (isFirstFrame = false) => {
+    if (!isFirstFrame) {
+      process.stdout.write(`\u001B[${artHeight}A`);
+    }
+    process.stdout.write(`${normalizedFrames[frameIndex].join('\n')}\n`);
+    frameIndex = (frameIndex + 1) % normalizedFrames.length;
+  };
+
+  renderFrame(true);
+  const intervalId = setInterval(() => renderFrame(), 200);
+  const timeoutId = setTimeout(() => {
+    clearInterval(intervalId);
+  }, 4000);
+
+  return () => {
+    clearInterval(intervalId);
+    clearTimeout(timeoutId);
+  };
 }
 
 function startLoop(intervalMinutes, options = {}) {
   const { showStatus = false } = options;
   let statusLength = 0;
   let statusActive = false;
+  let stopCoffeeArt = () => {};
 
   const logLine = (message) => {
     if (statusActive) {
@@ -129,7 +185,7 @@ function startLoop(intervalMinutes, options = {}) {
   };
 
   console.log(`Coffee breaks scheduled every ${intervalMinutes} minutes. Press Ctrl+C to stop.`);
-  printCoffeeArt();
+  stopCoffeeArt = printCoffeeArt();
 
   const startedAt = Date.now();
   const intervalMs = intervalMinutes * 60 * 1000;
@@ -180,6 +236,9 @@ function startLoop(intervalMinutes, options = {}) {
     }
     if (statusIntervalId) {
       clearInterval(statusIntervalId);
+    }
+    if (stopCoffeeArt) {
+      stopCoffeeArt();
     }
     logLine('\nStopped. Stay fresh ☕');
     process.exit(0);
