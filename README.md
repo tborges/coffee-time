@@ -47,7 +47,7 @@ coffee-time start --interval 45 --status
 * Prints a single startup line:
   `Coffee breaks scheduled every 45 minutes. Press Ctrl+C to stop.`
 * Optional status flag (`--status`) prints a countdown update every minute:
-  `⏳ Next break in 44:00`
+  `&#9200; Next break in 44 minutes`
 * Waits 45 minutes, then triggers a break notification.
 * After each break, countdown updates continue when `--status` is enabled.
 * Immediately schedules the next interval and repeats until you stop it (`Ctrl+C`).
